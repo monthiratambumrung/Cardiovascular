@@ -24,8 +24,11 @@ def pred_class(model: torch.nn.Module,
         transformed_image = image_transform(image).unsqueeze(dim=0).float()
         transformed_image = transformed_image.to(device)
         
-        # ตรวจสอบขนาดของ Tensor
-        print(f"Transformed image size: {transformed_image.size()}")
+        # แปลงประเภทข้อมูลให้เป็น Half (float16)
+        transformed_image = transformed_image.half()
+
+        # ตรวจสอบขนาดของ Tensor และประเภทข้อมูล
+        print(f"Transformed image size: {transformed_image.size()}, dtype: {transformed_image.dtype}")
 
         target_image_pred = model(transformed_image)
         target_image_pred_probs = torch.softmax(target_image_pred, dim=1)

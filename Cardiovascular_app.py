@@ -1,4 +1,3 @@
-# Cardiovascular_app.py
 import streamlit as st 
 import torch
 from PIL import Image
@@ -14,7 +13,7 @@ st.header('Please upload a picture')
 # Load Model 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = torch.load('mobilenetv3_large_100_checkpoint_fold1.pt', map_location=device)
-model.to(device)  # Make sure model is on the right device
+model.to(device)  # Make sure the model is on the correct device
 
 # Display image & Prediction 
 uploaded_image = st.file_uploader('Choose an image', type=['jpg'])
@@ -27,7 +26,7 @@ if uploaded_image is not None:
 
     if st.button('Prediction'):
         # Prediction class
-        pred, probli = pred_class(model, image, class_name)  # Change here
+        pred, probli = pred_class(model, image, class_name)
         
         st.write("## Prediction Result")
         # Get the index of the maximum value in probli[0]
@@ -38,20 +37,3 @@ if uploaded_image is not None:
             # Set the color to blue if it's the maximum value, otherwise use the default color
             color = "blue" if i == max_index else None
             st.write(f"## <span style='color:{color}'>{class_name[i]} : {probli[0][i]*100:.2f}%</span>", unsafe_allow_html=True)
-
-# prediction.py
-from typing import List, Tuple
-import torch
-import torchvision.transforms as T
-from PIL import Image
-
-def pred_class(model: torch.nn.Module,
-               image: Image.Image,  # Ensure type hint is correct
-               class_names: List[str],
-               image_size: Tuple[int, int] = (224, 224)) -> Tuple[str, np.ndarray]:
-    
-    # Ensure image transformation is correct
-    image_transform = T.Compose([
-        T.Resize(image_size),
-        T.ToTensor(),
-        T.Normalize(mean=[0.485, 0.

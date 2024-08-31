@@ -13,7 +13,7 @@ st.header('Please upload a picture')
 # Load Model 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = torch.load('mobilenetv3_large_100_checkpoint_fold1.pt', map_location=device)
-model.to(device)  # Make sure the model is on the correct device
+model.to(device)
 
 # Display image & Prediction 
 uploaded_image = st.file_uploader('Choose an image', type=['jpg'])
@@ -25,15 +25,15 @@ if uploaded_image is not None:
     class_name = ['true', 'false']
 
     if st.button('Prediction'):
-        # Prediction class
-        pred, probli = pred_class(model, image, class_name)
-        
-        st.write("## Prediction Result")
-        # Get the index of the maximum value in probli[0]
-        max_index = np.argmax(probli[0])
+        try:
+            # Prediction class
+            pred, probli = pred_class(model, image, class_name)
+            
+            st.write("## Prediction Result")
+            max_index = np.argmax(probli[0])
 
-        # Iterate over the class_name and probli lists
-        for i in range(len(class_name)):
-            # Set the color to blue if it's the maximum value, otherwise use the default color
-            color = "blue" if i == max_index else None
-            st.write(f"## <span style='color:{color}'>{class_name[i]} : {probli[0][i]*100:.2f}%</span>", unsafe_allow_html=True)
+            for i in range(len(class_name)):
+                color = "blue" if i == max_index else None
+                st.write(f"## <span style='color:{color}'>{class_name[i]} : {probli[0][i]*100:.2f}%</span>", unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"Error occurred: {e}")

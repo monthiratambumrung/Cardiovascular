@@ -2,14 +2,14 @@ from typing import List, Tuple
 import torch
 import torchvision.transforms as T
 from PIL import Image
+import numpy as np
 
 def pred_class(model: torch.nn.Module,
-               image,
+               image: Image.Image,  # เพิ่มความชัดเจนของ type hint
                class_names: List[str],
-               image_size: Tuple[int, int] = (224, 224)):
+               image_size: Tuple[int, int] = (224, 224)) -> Tuple[str, np.ndarray]:
     
-    img = image
-
+    # แปลงรูปภาพให้เหมาะสมก่อนนำเข้าโมเดล
     image_transform = T.Compose([
         T.Resize(image_size),
         T.ToTensor(),
@@ -22,16 +22,15 @@ def pred_class(model: torch.nn.Module,
 
     model.eval()
     with torch.inference_mode():
+        transformed_image = image_transform(image).unsqueeze(dim=0).float()
+        transformed_image = transformed_image.to(device)
 
-        transformed_image = image_transform(img).unsqueeze(dim=0).float()
+        target_image_pred = model(transformed_image)
+        target_image_pred_probs = torch.softmax(target_image_pred, dim=1)
 
-        target_image_pred = model(transformed_image.to(device))
-
-    target_image_pred_probs = torch.softmax(target_image_pred, dim=1)
-
-    target_image_pred_label = torch.argmax(target_image_pred_probs, dim=1)
-
-    predicted_class = class_names[target_image_pred_label]
-    prob = target_image_pred_probs.cpu().numpy()
+        # หาคลาสที่มีค่าความน่าจะเป็นสูงสุด
+        target_image_pred_label = torch.argmax(target_image_pred_probs, dim=1)
+        predicted_class = class_names[target_image_pred_label.item()]
+        prob = target_image_pred_probs.cpu().numpy()
 
     return predicted_class, prob

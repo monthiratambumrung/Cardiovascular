@@ -21,11 +21,8 @@ def pred_class(model: torch.nn.Module,
 
     model.eval()
     with torch.inference_mode():
-        transformed_image = image_transform(image).unsqueeze(dim=0).float()
+        transformed_image = image_transform(image).unsqueeze(dim=0).half()
         transformed_image = transformed_image.to(device)
-        
-        # แปลงประเภทข้อมูลให้เป็น Half (float16)
-        transformed_image = transformed_image.half()
 
         # ตรวจสอบขนาดของ Tensor และประเภทข้อมูล
         print(f"Transformed image size: {transformed_image.size()}, dtype: {transformed_image.dtype}")

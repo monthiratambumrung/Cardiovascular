@@ -13,6 +13,7 @@ st.header('Please upload a picture')
 # Load Model 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = torch.load('mobilenetv3_large_100_checkpoint_fold1.pt', map_location=device)
+model = model.half()  # แปลงโมเดลให้รองรับ float16
 model.to(device)
 
 # Display image & Prediction 

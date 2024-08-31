@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 
 def pred_class(model: torch.nn.Module,
-               image: Image.Image,  # เพิ่มความชัดเจนของ type hint
+               image: Image.Image,  # เพิ่ม type hint ให้ชัดเจน
                class_names: List[str],
                image_size: Tuple[int, int] = (224, 224)) -> Tuple[str, np.ndarray]:
     
@@ -13,8 +13,8 @@ def pred_class(model: torch.nn.Module,
     image_transform = T.Compose([
         T.Resize(image_size),
         T.ToTensor(),
-        T.Normalize(mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225]),
+        T.Normalize(mean=[0.485, 0.456, 0.406],  # ปิดลิสต์ที่นี่
+                    std=[0.229, 0.224, 0.225]),  # ปิดลิสต์ที่นี่
     ])
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
